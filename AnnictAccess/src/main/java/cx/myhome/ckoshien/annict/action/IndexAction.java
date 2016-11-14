@@ -15,16 +15,22 @@
  */
 package cx.myhome.ckoshien.annict.action;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.seasar.framework.beans.util.BeanUtil;
 import org.seasar.framework.util.ResourceUtil;
 import org.seasar.struts.annotation.Execute;
 
 import cx.myhome.ckoshien.annict.dto.LoginDto;
 import cx.myhome.ckoshien.annict.rest.RestClient;
 import cx.myhome.ckoshien.annict.rest.dto.AnnictAuthorizeDto;
+import cx.myhome.ckoshien.annict.rest.dto.ProgramsDto;
 import cx.myhome.ckoshien.annict.rest.dto.ResultDto;
 
 
@@ -37,9 +43,15 @@ public class IndexAction {
 	private AnnictAuthorizeDto entity;
 	private HashMap<String, String> header;
 	private RestClient client;
+	private ProgramsDto program;
+	private List<ProgramsDto> programs;
 
     @Execute(validator = false)
 	public String index() {
+    	if(code==null){
+    		return "https://annict.com/oauth/authorize?client_id=7867a6f7dff79dcc31ac4700e9ff1a95b2fce1092994cb68d7f38dcf92594066&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2FAnnictAccess&response_type=code&scope=read+write&redirect=true";
+    		//return "https://annict.com/oauth/applications&redirect=true";
+    	}
     	RestClient client = new RestClient();
 		String uri = "https://api.annict.com/oauth/token";
 		AnnictAuthorizeDto entity= new AnnictAuthorizeDto();
@@ -58,13 +70,25 @@ public class IndexAction {
 
     @Execute(validator = false)
     public String index2(){
-    	String uri="https://api.annict.com/v1/me/programs?filter_unwatched=true&accessToken="+loginDto.getAccess_token();
+    	String uri="https://api.annict.com/v1/me/programs?sort_started_at=asc&per_page=40&filter_unwatched=true&accessToken="+loginDto.getAccess_token();
     	header= new HashMap<>();
     	client = new RestClient();
     	header.put("Authorization", "Bearer "+loginDto.getAccess_token());
 		entity=null;
 		resultDto= new ResultDto();
 		resultDto=client.sendRequest(uri, "GET", entity, ResultDto.class,header);
-        return "index.jsp";
+		Date now=new Date();
+		programs=new ArrayList<ProgramsDto>();
+		for(int i=0;i<resultDto.getPrograms().size();i++){
+			ProgramsDto dto=new ProgramsDto();
+			program=resultDto.getPrograms().get(i);
+			Date started_at = program.getStarted_at();
+			long dayDiff = ( now.getTime() - started_at.getTime()  ) / (1000 * 60 * 60 * 24 );
+			BeanUtil.copyProperties(program, dto);
+			dto.setDayDiff(dayDiff);
+			programs.add(dto);
+		}
+		resultDto.setPrograms(programs);
+		return "index.jsp";
     }
 }

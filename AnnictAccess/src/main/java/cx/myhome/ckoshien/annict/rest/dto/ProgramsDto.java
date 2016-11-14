@@ -10,6 +10,7 @@ public class ProgramsDto {
 	private HashMap<String,Object> channel;
 	private HashMap<String,Object> work;
 	private HashMap<String,Object> episode;
+	private long dayDiff;
 	public Integer getId() {
 		return id;
 	}
@@ -45,5 +46,11 @@ public class ProgramsDto {
 	}
 	public void setEpisode(HashMap<String, Object> episode) {
 		this.episode = episode;
+	}
+	public long getDayDiff() {
+		return dayDiff;
+	}
+	public void setDayDiff(long dayDiff) {
+		this.dayDiff = dayDiff;
 	}
 }

@@ -1,17 +1,26 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<title>Dolteng Auto Generated</title>
+<title>AnnictAccess</title>
 </head>
 <body>
-<table>
-
+<table border=1>
+<tr>
+<th>放送日時</th>
+<th>作品名</th>
+</tr>
 <c:forEach var="programs" items="${resultDto.programs}">
 <tr>
-	<td>${programs.work.title}</td>
-	<td>#${programs.episode.number}</td>
-	<td>${programs.episode.title}</td>
-	<td><fmt:formatDate value="${programs.started_at}" pattern="yyyy年MM月dd日 HH:mm" /></td>
+	<td><fmt:formatDate value="${programs.started_at}" pattern="MM/dd HH:mm" />～
+	<br>
+	<c:choose>
+		<c:when test="${programs.dayDiff > 0}">(${programs.dayDiff}日遅れ)</c:when>
+		<c:when test="${programs.dayDiff < 0}">(${programs.dayDiff * -1}日後)</c:when>
+		<c:otherwise></c:otherwise>
+	</c:choose></td>
+	<td>${programs.work.title}
+	<br>#${programs.episode.number} ${programs.episode.title}</td>
+
 </tr>
 
 </c:forEach>
