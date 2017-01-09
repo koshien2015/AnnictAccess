@@ -15,7 +15,6 @@
  */
 package cx.myhome.ckoshien.annict.action;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -50,7 +49,6 @@ public class IndexAction {
 	public String index() {
     	if(code==null){
     		return "https://annict.com/oauth/authorize?client_id=7867a6f7dff79dcc31ac4700e9ff1a95b2fce1092994cb68d7f38dcf92594066&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2FAnnictAccess&response_type=code&scope=read+write&redirect=true";
-    		//return "https://annict.com/oauth/applications&redirect=true";
     	}
     	RestClient client = new RestClient();
 		String uri = "https://api.annict.com/oauth/token";
@@ -84,6 +82,7 @@ public class IndexAction {
 			program=resultDto.getPrograms().get(i);
 			Date started_at = program.getStarted_at();
 			long dayDiff = ( now.getTime() - started_at.getTime()  ) / (1000 * 60 * 60 * 24 );
+			//System.out.println(dayDiff);
 			BeanUtil.copyProperties(program, dto);
 			dto.setDayDiff(dayDiff);
 			programs.add(dto);
