@@ -7,6 +7,8 @@ import java.util.Map;
 
 import javax.ws.rs.core.MediaType;
 
+import org.apache.log4j.Logger;
+
 import net.arnx.jsonic.JSON;
 
 import com.sun.jersey.api.client.Client;
@@ -17,6 +19,7 @@ import com.sun.jersey.api.client.config.DefaultClientConfig;
 import com.sun.jersey.api.json.JSONConfiguration;
 
 public class RestClient {
+	private static Logger logger = Logger.getLogger("rootLogger");
 	public Client getClient() {
 		ClientConfig config = new DefaultClientConfig();
 		config.getFeatures().put(JSONConfiguration.FEATURE_POJO_MAPPING, Boolean.TRUE);//この設定をすることで　JSON　を　POJO　にパースできる
@@ -46,12 +49,12 @@ public class RestClient {
 			if(response.getStatus()==200){
 				json=response.getEntity(cls);
 			}else{
-				System.out.println(response.getEntity(String.class));
+				logger.error(response.getEntity(String.class));
 			}
 		}catch (URISyntaxException e) {
 			e.printStackTrace();
 		}catch(Throwable e){
-			e.printStackTrace();
+			logger.error("ERROR", e);
 		}finally{
 			return json;
 		}

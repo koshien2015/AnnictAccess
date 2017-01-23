@@ -21,6 +21,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.seasar.framework.beans.util.BeanUtil;
 import org.seasar.framework.util.ResourceUtil;
@@ -44,18 +46,35 @@ public class IndexAction {
 	private RestClient client;
 	private ProgramsDto program;
 	private List<ProgramsDto> programs;
+	@Resource
+	public HttpServletRequest request;
+	@Resource
+	public HttpServletResponse response;
 
     @Execute(validator = false)
 	public String index() {
+    	String host=request.getHeader("host");
     	if(code==null){
-    		return "https://annict.com/oauth/authorize?client_id=7867a6f7dff79dcc31ac4700e9ff1a95b2fce1092994cb68d7f38dcf92594066&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2FAnnictAccess&response_type=code&scope=read+write&redirect=true";
+    		if(host.indexOf("localhost")!=-1){
+    			return "https://annict.com/oauth/authorize?client_id=7867a6f7dff79dcc31ac4700e9ff1a95b2fce1092994cb68d7f38dcf92594066&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2FAnnictAccess&response_type=code&scope=read+write&redirect=true";
+    		}else if(host.indexOf("192.168.11.4")!=-1){
+    			return "https://annict.com/oauth/authorize?client_id=7867a6f7dff79dcc31ac4700e9ff1a95b2fce1092994cb68d7f38dcf92594066&redirect_uri=http%3A%2F%2F192.168.11.4%3A8080%2FAnnictAccess&response_type=code&scope=read+write&redirect=true";
+    		}else{
+    			return "https://annict.com/oauth/authorize?client_id=7867a6f7dff79dcc31ac4700e9ff1a95b2fce1092994cb68d7f38dcf92594066&redirect_uri=http%3A%2F%2Fjcbl.dip.jp%2FAnnictAccess&response_type=code&scope=read+write&redirect=true";
+    		}
     	}
     	RestClient client = new RestClient();
 		String uri = "https://api.annict.com/oauth/token";
 		AnnictAuthorizeDto entity= new AnnictAuthorizeDto();
-		HashMap<String, String> header= new HashMap<>();
+		HashMap<String, String> header= new HashMap<String, String>();
 		entity.setClient_id(ResourceUtil.getProperties("config.properties").getProperty("client_id"));
-		entity.setRedirect_uri("http://localhost:8080/AnnictAccess");
+		if(host.indexOf("localhost")!=-1){
+			entity.setRedirect_uri("http://localhost:8080/AnnictAccess");
+		}else if(host.indexOf("192.168.11.4")!=-1){
+			entity.setRedirect_uri("http://192.168.11.4:8080/AnnictAccess");
+		}else{
+			entity.setRedirect_uri("http://jcbl.dip.jp/AnnictAccess");
+		}
 		entity.setResponse_type("code");
 		entity.setScope("read");
 		entity.setClient_secret(ResourceUtil.getProperties("config.properties").getProperty("secret_key"));
@@ -69,7 +88,7 @@ public class IndexAction {
     @Execute(validator = false)
     public String index2(){
     	String uri="https://api.annict.com/v1/me/programs?sort_started_at=asc&per_page=40&filter_unwatched=true&accessToken="+loginDto.getAccess_token();
-    	header= new HashMap<>();
+    	header= new HashMap<String, String>();
     	client = new RestClient();
     	header.put("Authorization", "Bearer "+loginDto.getAccess_token());
 		entity=null;

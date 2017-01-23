@@ -1,0 +1,8 @@
+DaoType=S2JDBC
+DefaultResourcePath=/AnnictAccess/src/main/resources
+DefaultRootPackage=cx.myhome.ckoshien.annict
+DefaultSrcPath=/AnnictAccess/src/main/java
+ServletPath=AnnictAccess
+ViewType=SA-Struts
+WebContentsRoot=src/main/webapp
+eclipse.preferences.version=1
