@@ -107,6 +107,7 @@ public class IndexAction {
 			programs.add(dto);
 		}
 		resultDto.setPrograms(programs);
+		System.out.println(loginDto.getAccess_token());
 		return "index.jsp";
     }
 }
