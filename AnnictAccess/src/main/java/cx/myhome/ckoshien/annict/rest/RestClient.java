@@ -49,6 +49,7 @@ public class RestClient {
 			if(response.getStatus()==200){
 				json=response.getEntity(cls);
 			}else{
+				logger.error(response.getStatus());
 				logger.error(response.getEntity(String.class));
 			}
 		}catch (URISyntaxException e) {

@@ -14,7 +14,10 @@
 <!-- ================================= Global Exception Definitions -->
 
     <global-exceptions>
+       <exception path="/WEB-INF/view/systemErr.jsp" key="errors.system"
+                type="java.lang.Exception"/>
     </global-exceptions>
+
 
 <!-- =================================== Global Forward Definitions -->
 
@@ -25,7 +28,7 @@
 
     <action-mappings>
     </action-mappings>
-    
+
 
 <!-- ===================================== Controller Configuration -->
 

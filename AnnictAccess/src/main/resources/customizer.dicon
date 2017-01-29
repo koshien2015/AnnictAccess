@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE components PUBLIC "-//SEASAR//DTD S2Container 2.4//EN" 
+<!DOCTYPE components PUBLIC "-//SEASAR//DTD S2Container 2.4//EN"
 	"http://www.seasar.org/dtd/components24.dtd">
 <components>
   <include path="default-customizer.dicon"/>
-  
+
   <!--
     コンポーネントに AOP (インターセプタ) を適用するには AspectCustomizer を使用します．
     CustomizerChain には複数の AspectCustomizer を設定することができます．
@@ -11,7 +11,7 @@
 
       ・interceptorName (String 型，必須)
         適用するインターセプタのコンポーネント名です．
-        addInterceptorName() メソッドで複数登録することもできます． 
+        addInterceptorName() メソッドで複数登録することもできます．
 
       ・pointcut (String 型，任意)
         インターセプタを適用するメソッドを選択するポイントカットを正規表現で指定します．
@@ -47,6 +47,9 @@
   <component name="actionCustomizer" class="org.seasar.framework.container.customizer.CustomizerChain">
     <initMethod name="addAspectCustomizer">
       <arg>"actionMessagesThrowsInterceptor"</arg>
+    </initMethod>
+    <initMethod name="addAspectCustomizer">
+      <arg>"AAThrowsInterceptor"</arg>
     </initMethod>
     <initMethod name="addCustomizer">
       <arg>traceCustomizer</arg>

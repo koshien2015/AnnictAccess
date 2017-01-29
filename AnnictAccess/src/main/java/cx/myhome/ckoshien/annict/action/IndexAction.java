@@ -110,4 +110,10 @@ public class IndexAction {
 		System.out.println(loginDto.getAccess_token());
 		return "index.jsp";
     }
+
+    @Execute(validator = false)
+	public String systemErr() {
+
+		return "systemErr.jsp";
+	}
 }
