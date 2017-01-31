@@ -87,6 +87,9 @@ public class IndexAction {
 
     @Execute(validator = false)
     public String index2(){
+    	if(loginDto.getAccess_token()==null){
+    		return "401.jsp";
+    	}
     	String uri="https://api.annict.com/v1/me/programs?sort_started_at=asc&per_page=40&filter_unwatched=true&accessToken="+loginDto.getAccess_token();
     	header= new HashMap<String, String>();
     	client = new RestClient();
