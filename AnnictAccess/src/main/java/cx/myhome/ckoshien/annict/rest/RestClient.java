@@ -48,6 +48,9 @@ public class RestClient {
 			response=client.handle(request);
 			if(response.getStatus()==200){
 				json=response.getEntity(cls);
+			}else if(response.getStatus()==401){
+				logger.error("401ERROR:"+uri);
+				logger.error("401ERROR:"+header.toString());
 			}else{
 				logger.error(response.getStatus());
 				logger.error(response.getEntity(String.class));
@@ -59,5 +62,6 @@ public class RestClient {
 		}finally{
 			return json;
 		}
+
 	}
 }
