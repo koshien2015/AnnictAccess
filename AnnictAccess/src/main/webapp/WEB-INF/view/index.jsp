@@ -8,6 +8,7 @@
 <script src="${f:url('/js/bootstrap/bootstrap.min.js')}" type="text/javascript"></script>
 </head>
 <body>
+<h1>${username}さんのアニメ消化状況</h1>
 <table border=1>
 <tr>
 <th>放送日時</th>

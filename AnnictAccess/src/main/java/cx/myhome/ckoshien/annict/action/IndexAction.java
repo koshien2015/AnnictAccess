@@ -15,6 +15,7 @@
  */
 package cx.myhome.ckoshien.annict.action;
 
+import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -24,6 +25,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
 import org.seasar.framework.beans.util.BeanUtil;
 import org.seasar.framework.util.ResourceUtil;
 import org.seasar.struts.annotation.Execute;
@@ -33,9 +35,11 @@ import cx.myhome.ckoshien.annict.rest.RestClient;
 import cx.myhome.ckoshien.annict.rest.dto.AnnictAuthorizeDto;
 import cx.myhome.ckoshien.annict.rest.dto.ProgramsDto;
 import cx.myhome.ckoshien.annict.rest.dto.ResultDto;
+import cx.myhome.ckoshien.annict.rest.dto.UserDto;
 
 
 public class IndexAction {
+	private static Logger logger = Logger.getLogger("rootLogger");
 	public String code;
 	public String result;
 	public ResultDto resultDto;
@@ -50,6 +54,7 @@ public class IndexAction {
 	public HttpServletRequest request;
 	@Resource
 	public HttpServletResponse response;
+	public String username;
 
     @Execute(validator = false)
 	public String index() {
@@ -57,8 +62,8 @@ public class IndexAction {
     	if(code==null){
     		if(host.indexOf("localhost")!=-1){
     			return "https://annict.com/oauth/authorize?client_id=7867a6f7dff79dcc31ac4700e9ff1a95b2fce1092994cb68d7f38dcf92594066&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2FAnnictAccess&response_type=code&scope=read+write&redirect=true";
-    		}else if(host.indexOf("192.168.11.4")!=-1){
-    			return "https://annict.com/oauth/authorize?client_id=7867a6f7dff79dcc31ac4700e9ff1a95b2fce1092994cb68d7f38dcf92594066&redirect_uri=http%3A%2F%2F192.168.11.4%3A8080%2FAnnictAccess&response_type=code&scope=read+write&redirect=true";
+    		}else if(host.indexOf("192.168.11")!=-1){
+    			return "https://annict.com/oauth/authorize?client_id=7867a6f7dff79dcc31ac4700e9ff1a95b2fce1092994cb68d7f38dcf92594066&redirect_uri=http%3A%2F%2F192.168.11.2%3A8080%2FAnnictAccess&response_type=code&scope=read+write&redirect=true";
     		}else{
     			return "https://annict.com/oauth/authorize?client_id=7867a6f7dff79dcc31ac4700e9ff1a95b2fce1092994cb68d7f38dcf92594066&redirect_uri=http%3A%2F%2Fjcbl.dip.jp%2FAnnictAccess&response_type=code&scope=read+write&redirect=true";
     		}
@@ -70,8 +75,8 @@ public class IndexAction {
 		entity.setClient_id(ResourceUtil.getProperties("config.properties").getProperty("client_id"));
 		if(host.indexOf("localhost")!=-1){
 			entity.setRedirect_uri("http://localhost:8080/AnnictAccess");
-		}else if(host.indexOf("192.168.11.4")!=-1){
-			entity.setRedirect_uri("http://192.168.11.4:8080/AnnictAccess");
+		}else if(host.indexOf("192.168.11")!=-1){
+			entity.setRedirect_uri("http://192.168.11.2:8080/AnnictAccess");
 		}else{
 			entity.setRedirect_uri("http://jcbl.dip.jp/AnnictAccess");
 		}
@@ -87,6 +92,25 @@ public class IndexAction {
 
     @Execute(validator = false)
     public String index2(){
+    	try {
+    		InetAddress ia=InetAddress.getByName(request.getRemoteAddr());
+//    		System.out.println(ia.getHostName());
+//    		if(!ia.getHostName().substring(ia.getHostName().length()-3).equals(".jp")
+//    				&& !request.getRemoteAddr().equals("0:0:0:0:0:0:0:1")
+//    				&& !request.getRemoteAddr().startsWith("192.168")){
+//    			//logger.info("ホスト名で遮断:"+ia.getHostName()+":"+request.getRemotePort());
+//    			//response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+//    			try {
+//					response.sendError(404, "許可されていないドメインです");
+//				} catch (IOException e) {
+//					logger.error(e);
+//				}
+//        		return null;
+//    		}
+			logger.info(ia.getHostName()+":"+request.getRemotePort());
+		} catch (Exception e1) {
+			e1.printStackTrace();
+		}
     	if(loginDto.getAccess_token()==null){
     		return "401.jsp";
     	}
@@ -111,6 +135,11 @@ public class IndexAction {
 		}
 		resultDto.setPrograms(programs);
 		System.out.println(loginDto.getAccess_token());
+		uri = "https://api.annict.com/v1/me?access_token="+loginDto.getAccess_token();
+		entity=null;
+		UserDto json2=client.sendRequest(uri, "GET", entity, UserDto.class,header);
+		username=json2.getName()+"("+json2.getUsername()+")";
+		logger.info(username);
 		return "index.jsp";
     }
 
