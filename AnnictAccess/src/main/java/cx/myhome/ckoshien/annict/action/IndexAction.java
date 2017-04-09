@@ -16,11 +16,11 @@
 package cx.myhome.ckoshien.annict.action;
 
 import java.net.InetAddress;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -55,6 +55,9 @@ public class IndexAction {
 	@Resource
 	public HttpServletResponse response;
 	public String username;
+	public List<Integer> countList;
+	public List<String> dateList;
+	public Integer todayIndex;
 
     @Execute(validator = false)
 	public String index() {
@@ -122,17 +125,29 @@ public class IndexAction {
 		resultDto= new ResultDto();
 		resultDto=client.sendRequest(uri, "GET", entity, ResultDto.class,header);
 		Date now=new Date();
+
+		dateList=new ArrayList<String>();
+		countList=new ArrayList<Integer>();
+		SimpleDateFormat sdf=new SimpleDateFormat("yyyy/MM/dd");
 		programs=new ArrayList<ProgramsDto>();
 		for(int i=0;i<resultDto.getPrograms().size();i++){
 			ProgramsDto dto=new ProgramsDto();
 			program=resultDto.getPrograms().get(i);
 			Date started_at = program.getStarted_at();
+			String dateStr=sdf.format(started_at);
+			if(!dateList.contains(dateStr)){
+				dateList.add(dateStr);
+				countList.add(1);
+			}else{
+				countList.set(dateList.indexOf(dateStr),countList.get(dateList.indexOf(dateStr))+1);
+			}
 			long dayDiff = ( now.getTime() - started_at.getTime()  ) / (1000 * 60 * 60 * 24 );
-			//System.out.println(dayDiff);
 			BeanUtil.copyProperties(program, dto);
 			dto.setDayDiff(dayDiff);
 			programs.add(dto);
 		}
+
+		todayIndex=dateList.indexOf(sdf.format(now));
 		resultDto.setPrograms(programs);
 		System.out.println(loginDto.getAccess_token());
 		uri = "https://api.annict.com/v1/me?access_token="+loginDto.getAccess_token();
