@@ -149,11 +149,11 @@ public class IndexAction {
 
 		todayIndex=dateList.indexOf(sdf.format(now));
 		resultDto.setPrograms(programs);
-		System.out.println(loginDto.getAccess_token());
+		//System.out.println(loginDto.getAccess_token());
 		uri = "https://api.annict.com/v1/me?access_token="+loginDto.getAccess_token();
 		entity=null;
 		UserDto json2=client.sendRequest(uri, "GET", entity, UserDto.class,header);
-		username=json2.getName()+"("+json2.getUsername()+")";
+		username=json2.getName()+"(@"+json2.getUsername()+")";
 		logger.info(username);
 		return "index.jsp";
     }

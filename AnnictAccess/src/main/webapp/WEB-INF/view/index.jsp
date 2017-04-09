@@ -73,7 +73,7 @@ $(function(){
 </script>
 </head>
 <body>
-<h1>${username}さんのアニメ消化状況</h1>
+<h1>${username}さんのアニメ未消化状況</h1>
 <div id="graph"></div>
 <table border=1>
 <tr>
@@ -89,8 +89,8 @@ $(function(){
 		<c:when test="${programs.dayDiff < 0}">(${programs.dayDiff * -1}日後)</c:when>
 		<c:otherwise></c:otherwise>
 	</c:choose></td>
-	<td>${programs.work.title}
-	<br>#${programs.episode.number} ${programs.episode.title}</td>
+	<td><a href="https://annict.com/works/${programs.work.id}" target=_blank>${programs.work.title}</a>
+	<br><a href="https://annict.com/works/${programs.work.id}/episodes/${programs.episode.id}" target=_blank>#${programs.episode.number} ${programs.episode.title}</a></td>
 
 </tr>
 
