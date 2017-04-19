@@ -16,6 +16,7 @@ public class MemoryUtil {
 		long max =   Runtime.getRuntime().maxMemory() / 1024;
 		long used =  total - free;
 		double ratio = (used * 100 / (double)total);
+		double ratio2=(total*100/(double)max);
 
 		info += "Total   = " + format_mem.format(total);
 		info += "\n";
@@ -23,7 +24,7 @@ public class MemoryUtil {
 		info += "\n";
 		info += "use     = " + format_mem.format(used) + " (" + format_ratio.format(ratio) + "%)";
 		info += "\n";
-		info += "can use = " + format_mem.format(max);
+		info += "can use = " + format_mem.format(max)+"("+format_ratio.format(ratio2)+"%)";
 		return info;
 	}
 

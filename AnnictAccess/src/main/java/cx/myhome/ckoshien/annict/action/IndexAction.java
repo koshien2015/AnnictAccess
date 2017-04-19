@@ -86,7 +86,7 @@ public class IndexAction {
 		entity.setCode(code);
 		AnnictAuthorizeDto json=client.sendRequest(uri, "POST", entity, AnnictAuthorizeDto.class,header);
 		loginDto.setAccess_token(json.getAccess_token());
-		MemoryUtil.viewMemoryInfo();
+		//MemoryUtil.viewMemoryInfo();
 		return "/index2&redirect=true";
 	}
 
