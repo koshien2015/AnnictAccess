@@ -36,20 +36,16 @@ import cx.myhome.ckoshien.annict.rest.dto.AnnictAuthorizeDto;
 import cx.myhome.ckoshien.annict.rest.dto.ProgramsDto;
 import cx.myhome.ckoshien.annict.rest.dto.ResultDto;
 import cx.myhome.ckoshien.annict.rest.dto.UserDto;
+import cx.myhome.ckoshien.annict.util.MemoryUtil;
 
 
 public class IndexAction {
 	private static Logger logger = Logger.getLogger("rootLogger");
 	public String code;
-	public String result;
+	//public String result;
 	public ResultDto resultDto;
 	@Resource
 	private LoginDto loginDto;
-	private AnnictAuthorizeDto entity;
-	private HashMap<String, String> header;
-	private RestClient client;
-	private ProgramsDto program;
-	private List<ProgramsDto> programs;
 	@Resource
 	public HttpServletRequest request;
 	@Resource
@@ -90,6 +86,7 @@ public class IndexAction {
 		entity.setCode(code);
 		AnnictAuthorizeDto json=client.sendRequest(uri, "POST", entity, AnnictAuthorizeDto.class,header);
 		loginDto.setAccess_token(json.getAccess_token());
+		MemoryUtil.viewMemoryInfo();
 		return "/index2&redirect=true";
 	}
 
@@ -118,10 +115,10 @@ public class IndexAction {
     		return "401.jsp";
     	}
     	String uri="https://api.annict.com/v1/me/programs?sort_started_at=asc&per_page=40&filter_unwatched=true&accessToken="+loginDto.getAccess_token();
-    	header= new HashMap<String, String>();
-    	client = new RestClient();
+    	HashMap<String, String> header= new HashMap<String, String>();
+    	RestClient client = new RestClient();
     	header.put("Authorization", "Bearer "+loginDto.getAccess_token());
-		entity=null;
+    	AnnictAuthorizeDto entity=null;
 		resultDto= new ResultDto();
 		resultDto=client.sendRequest(uri, "GET", entity, ResultDto.class,header);
 		Date now=new Date();
@@ -129,10 +126,10 @@ public class IndexAction {
 		dateList=new ArrayList<String>();
 		countList=new ArrayList<Integer>();
 		SimpleDateFormat sdf=new SimpleDateFormat("yyyy/MM/dd");
-		programs=new ArrayList<ProgramsDto>();
+		List<ProgramsDto> programs=new ArrayList<ProgramsDto>();
 		for(int i=0;i<resultDto.getPrograms().size();i++){
 			ProgramsDto dto=new ProgramsDto();
-			program=resultDto.getPrograms().get(i);
+			ProgramsDto program=resultDto.getPrograms().get(i);
 			Date started_at = program.getStarted_at();
 			String dateStr=sdf.format(started_at);
 			if(!dateList.contains(dateStr)){
@@ -155,6 +152,7 @@ public class IndexAction {
 		UserDto json2=client.sendRequest(uri, "GET", entity, UserDto.class,header);
 		username=json2.getName()+"(@"+json2.getUsername()+")";
 		logger.info(username);
+		MemoryUtil.viewMemoryInfo();
 		return "index.jsp";
     }
 

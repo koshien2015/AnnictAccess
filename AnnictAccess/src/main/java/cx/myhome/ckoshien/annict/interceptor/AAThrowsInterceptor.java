@@ -11,12 +11,15 @@ import org.apache.log4j.Logger;
 import org.seasar.framework.aop.interceptors.ThrowsInterceptor;
 import org.seasar.framework.container.SingletonS2Container;
 
+import cx.myhome.ckoshien.annict.rest.SlackLogger;
+
 public class AAThrowsInterceptor extends ThrowsInterceptor  {
 
 	/** 生成シリアル・バージョンID */
 	private static final long serialVersionUID = -1316270822409456537L;
 
 	static Logger logger = Logger.getLogger("GPThrowsInterceptor");
+	SlackLogger sLogger= new SlackLogger();
 
 	public void handleThrowable(Throwable e, MethodInvocation invocation) throws Throwable {
 
@@ -54,6 +57,8 @@ public class AAThrowsInterceptor extends ThrowsInterceptor  {
 		sb.append("\n");
 		sb.append(e.getStackTrace());
 		logger.error(sb.toString(), e);
+		sLogger.info("システムエラー(AnnictAccess)");
+
 		response.sendRedirect(request.getContextPath() + "/systemErr");
 
 
