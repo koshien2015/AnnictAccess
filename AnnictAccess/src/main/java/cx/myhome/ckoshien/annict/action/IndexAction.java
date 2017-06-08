@@ -49,7 +49,7 @@ public class IndexAction {
     		}else if(host.indexOf("192.168.11")!=-1){
     			return "https://annict.com/oauth/authorize?client_id=7867a6f7dff79dcc31ac4700e9ff1a95b2fce1092994cb68d7f38dcf92594066&redirect_uri=http%3A%2F%2F192.168.11.2%2FAnnictAccess&response_type=code&scope=read+write&redirect=true";
     		}else{
-    			return "https://annict.com/oauth/authorize?client_id=7867a6f7dff79dcc31ac4700e9ff1a95b2fce1092994cb68d7f38dcf92594066&redirect_uri=http%3A%2F%2Fjcbl.dip.jp%2FAnnictAccess&response_type=code&scope=read+write&redirect=true";
+    			return "https://annict.com/oauth/authorize?client_id=7867a6f7dff79dcc31ac4700e9ff1a95b2fce1092994cb68d7f38dcf92594066&redirect_uri=http%3A%2F%2Fjcbl.mydns.jp%2FAnnictAccess&response_type=code&scope=read+write&redirect=true";
     		}
     	}
     	RestClient client = new RestClient();
@@ -62,7 +62,7 @@ public class IndexAction {
 		}else if(host.indexOf("192.168.11")!=-1){
 			entity.setRedirect_uri("http://192.168.11.2/AnnictAccess");
 		}else{
-			entity.setRedirect_uri("http://jcbl.dip.jp/AnnictAccess");
+			entity.setRedirect_uri("http://jcbl.mydns.jp/AnnictAccess");
 		}
 		entity.setResponse_type("code");
 		entity.setScope("read");
