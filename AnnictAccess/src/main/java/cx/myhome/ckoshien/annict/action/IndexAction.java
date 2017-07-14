@@ -1,5 +1,6 @@
 package cx.myhome.ckoshien.annict.action;
 
+import java.io.IOException;
 import java.net.InetAddress;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -45,11 +46,11 @@ public class IndexAction {
     	String host=request.getHeader("host");
     	if(code==null){
     		if(host.indexOf("localhost")!=-1){
-    			return "https://annict.com/oauth/authorize?client_id=7867a6f7dff79dcc31ac4700e9ff1a95b2fce1092994cb68d7f38dcf92594066&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2FAnnictAccess&response_type=code&scope=read+write&redirect=true";
+    			return "https://annict.jp/oauth/authorize?client_id=7867a6f7dff79dcc31ac4700e9ff1a95b2fce1092994cb68d7f38dcf92594066&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2FAnnictAccess&response_type=code&scope=read+write&redirect=true";
     		}else if(host.indexOf("192.168.11")!=-1){
-    			return "https://annict.com/oauth/authorize?client_id=7867a6f7dff79dcc31ac4700e9ff1a95b2fce1092994cb68d7f38dcf92594066&redirect_uri=http%3A%2F%2F192.168.11.2%2FAnnictAccess&response_type=code&scope=read+write&redirect=true";
+    			return "https://annict.jp/oauth/authorize?client_id=7867a6f7dff79dcc31ac4700e9ff1a95b2fce1092994cb68d7f38dcf92594066&redirect_uri=http%3A%2F%2F192.168.11.2%2FAnnictAccess&response_type=code&scope=read+write&redirect=true";
     		}else{
-    			return "https://annict.com/oauth/authorize?client_id=7867a6f7dff79dcc31ac4700e9ff1a95b2fce1092994cb68d7f38dcf92594066&redirect_uri=http%3A%2F%2Fjcbl.mydns.jp%2FAnnictAccess&response_type=code&scope=read+write&redirect=true";
+    			return "https://annict.jp/oauth/authorize?client_id=7867a6f7dff79dcc31ac4700e9ff1a95b2fce1092994cb68d7f38dcf92594066&redirect_uri=http%3A%2F%2Fjcbl.mydns.jp%2FAnnictAccess&response_type=code&scope=read+write&redirect=true";
     		}
     	}
     	RestClient client = new RestClient();
@@ -80,18 +81,18 @@ public class IndexAction {
     	try {
     		InetAddress ia=InetAddress.getByName(request.getRemoteAddr());
 //    		System.out.println(ia.getHostName());
-//    		if(!ia.getHostName().substring(ia.getHostName().length()-3).equals(".jp")
-//    				&& !request.getRemoteAddr().equals("0:0:0:0:0:0:0:1")
-//    				&& !request.getRemoteAddr().startsWith("192.168")){
+    		if(!ia.getHostName().substring(ia.getHostName().length()-3).equals(".jp")
+    				&& !request.getRemoteAddr().equals("0:0:0:0:0:0:0:1")
+    				&& !request.getRemoteAddr().startsWith("192.168")){
 //    			//logger.info("ホスト名で遮断:"+ia.getHostName()+":"+request.getRemotePort());
 //    			//response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-//    			try {
-//					response.sendError(404, "許可されていないドメインです");
-//				} catch (IOException e) {
-//					logger.error(e);
-//				}
-//        		return null;
-//    		}
+    			try {
+					response.sendError(404, "許可されていないドメインです");
+				} catch (IOException e) {
+					logger.error(e);
+				}
+        		return null;
+    		}
 			logger.info(ia.getHostName()+":"+request.getRemotePort());
 		} catch (Exception e1) {
 			e1.printStackTrace();
