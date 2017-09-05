@@ -11,10 +11,13 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import net.arnx.jsonic.JSON;
+
 import org.apache.log4j.Logger;
 import org.seasar.framework.beans.util.BeanUtil;
 import org.seasar.framework.util.ResourceUtil;
 import org.seasar.struts.annotation.Execute;
+import org.seasar.struts.util.ResponseUtil;
 
 import cx.myhome.ckoshien.annict.dto.LoginDto;
 import cx.myhome.ckoshien.annict.rest.RestClient;
@@ -143,9 +146,42 @@ public class IndexAction {
 		return "index.jsp";
     }
 
+
+    @Execute(validator = false)
+	public String v2() {
+    	String host=request.getHeader("host");
+    	if(code==null){
+    		//codeがnullの場合は認証リダイレクト
+    		if(host.indexOf("localhost")!=-1){
+    			return "https://annict.jp/oauth/authorize?client_id=7867a6f7dff79dcc31ac4700e9ff1a95b2fce1092994cb68d7f38dcf92594066&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2FAnnictAccess%2Fv2&response_type=code&scope=read+write&redirect=true";
+    		}else if(host.indexOf("192.168.11")!=-1){
+    			return "https://annict.jp/oauth/authorize?client_id=7867a6f7dff79dcc31ac4700e9ff1a95b2fce1092994cb68d7f38dcf92594066&redirect_uri=http%3A%2F%2F192.168.11.2%2FAnnictAccess&response_type=code&scope=read+write&redirect=true";
+    		}else{
+    			return "https://annict.jp/oauth/authorize?client_id=7867a6f7dff79dcc31ac4700e9ff1a95b2fce1092994cb68d7f38dcf92594066&redirect_uri=http%3A%2F%2Fjcbl.mydns.jp%2FAnnictAccess&response_type=code&scope=read+write&redirect=true";
+    		}
+    	}RestClient client = new RestClient();
+		String uri = "https://api.annict.com/oauth/token";
+		AnnictAuthorizeDto entity= new AnnictAuthorizeDto();
+		HashMap<String, String> header= new HashMap<String, String>();
+		entity.setClient_id(ResourceUtil.getProperties("config.properties").getProperty("client_id"));
+		if(host.indexOf("localhost")!=-1){
+			entity.setRedirect_uri("http://localhost:8080/AnnictAccess/v2");
+		}else if(host.indexOf("192.168.11")!=-1){
+			entity.setRedirect_uri("http://192.168.11.2/AnnictAccess/v2");
+		}else{
+			entity.setRedirect_uri("http://jcbl.mydns.jp/AnnictAccess/v2");
+		}
+		entity.setResponse_type("code");
+		entity.setScope("read");
+		entity.setClient_secret(ResourceUtil.getProperties("config.properties").getProperty("secret_key"));
+		entity.setGrant_type("authorization_code");
+		entity.setCode(code);
+		AnnictAuthorizeDto json=client.sendRequest(uri, "POST", entity, AnnictAuthorizeDto.class,header);
+		return "http://localhost:8080/AnnictAccess_v2/#/code="+json.getAccess_token()+"&redirect=true";
+	}
+
     @Execute(validator = false)
 	public String systemErr() {
-
 		return "systemErr.jsp";
 	}
 }
