@@ -7,24 +7,25 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import net.arnx.jsonic.JSON;
 
 import org.apache.log4j.Logger;
 import org.seasar.framework.beans.util.BeanUtil;
 import org.seasar.framework.util.ResourceUtil;
 import org.seasar.struts.annotation.Execute;
-import org.seasar.struts.util.ResponseUtil;
-
 import cx.myhome.ckoshien.annict.dto.LoginDto;
 import cx.myhome.ckoshien.annict.rest.RestClient;
 import cx.myhome.ckoshien.annict.rest.dto.AnnictAuthorizeDto;
 import cx.myhome.ckoshien.annict.rest.dto.ProgramsDto;
 import cx.myhome.ckoshien.annict.rest.dto.ResultDto;
 import cx.myhome.ckoshien.annict.rest.dto.UserDto;
+import cx.myhome.ckoshien.annict.task.AnnictCallTask;
 import cx.myhome.ckoshien.annict.util.MemoryUtil;
 
 
@@ -43,6 +44,7 @@ public class IndexAction {
 	public List<Integer> countList;
 	public List<String> dateList;
 	public Integer todayIndex;
+	private ExecutorService pool;
 
     @Execute(validator = false)
 	public String index() {
@@ -155,11 +157,18 @@ public class IndexAction {
     		if(host.indexOf("localhost")!=-1){
     			return "https://annict.jp/oauth/authorize?client_id=7867a6f7dff79dcc31ac4700e9ff1a95b2fce1092994cb68d7f38dcf92594066&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2FAnnictAccess%2Fv2&response_type=code&scope=read+write&redirect=true";
     		}else if(host.indexOf("192.168.11")!=-1){
-    			return "https://annict.jp/oauth/authorize?client_id=7867a6f7dff79dcc31ac4700e9ff1a95b2fce1092994cb68d7f38dcf92594066&redirect_uri=http%3A%2F%2F192.168.11.2%2FAnnictAccess&response_type=code&scope=read+write&redirect=true";
+    			return "https://annict.jp/oauth/authorize?client_id=7867a6f7dff79dcc31ac4700e9ff1a95b2fce1092994cb68d7f38dcf92594066&redirect_uri=http%3A%2F%2F192.168.11.2%2FAnnictAccess%2Fv2&response_type=code&scope=read+write&redirect=true";
     		}else{
-    			return "https://annict.jp/oauth/authorize?client_id=7867a6f7dff79dcc31ac4700e9ff1a95b2fce1092994cb68d7f38dcf92594066&redirect_uri=http%3A%2F%2Fjcbl.mydns.jp%2FAnnictAccess&response_type=code&scope=read+write&redirect=true";
+    			return "https://annict.jp/oauth/authorize?client_id=7867a6f7dff79dcc31ac4700e9ff1a95b2fce1092994cb68d7f38dcf92594066&redirect_uri=http%3A%2F%2Fjcbl.mydns.jp%2FAnnictAccess%2Fv2&response_type=code&scope=read+write&redirect=true";
     		}
-    	}RestClient client = new RestClient();
+    	}
+    	try {
+    		InetAddress ia=InetAddress.getByName(request.getRemoteAddr());
+    		logger.info(ia.getHostName()+":"+request.getRemotePort());
+		} catch (Exception e1) {
+			e1.printStackTrace();
+		}
+    	RestClient client = new RestClient();
 		String uri = "https://api.annict.com/oauth/token";
 		AnnictAuthorizeDto entity= new AnnictAuthorizeDto();
 		HashMap<String, String> header= new HashMap<String, String>();
@@ -177,6 +186,11 @@ public class IndexAction {
 		entity.setGrant_type("authorization_code");
 		entity.setCode(code);
 		AnnictAuthorizeDto json=client.sendRequest(uri, "POST", entity, AnnictAuthorizeDto.class,header);
+		pool = Executors.newFixedThreadPool(1);
+		loginDto.setAccess_token(json.getAccess_token());
+		List<Future<String>> list = new ArrayList<Future<String>>();
+		Future<String> future=pool.submit(new AnnictCallTask(loginDto));
+		list.add(future);
 		return "https://ckoshien.github.io/AnnictAccess_v2/#/code="+json.getAccess_token()+"&redirect=true";
 	}
 
