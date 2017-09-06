@@ -177,7 +177,7 @@ public class IndexAction {
 		entity.setGrant_type("authorization_code");
 		entity.setCode(code);
 		AnnictAuthorizeDto json=client.sendRequest(uri, "POST", entity, AnnictAuthorizeDto.class,header);
-		return "http://localhost:8080/AnnictAccess_v2/#/code="+json.getAccess_token()+"&redirect=true";
+		return "https://ckoshien.github.io/AnnictAccess_v2/#/code="+json.getAccess_token()+"&redirect=true";
 	}
 
     @Execute(validator = false)
