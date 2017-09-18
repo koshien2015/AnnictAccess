@@ -30,6 +30,12 @@ public class AnnictCallTask implements Callable<String>{
 		UserDto json2=client.sendRequest(uri, "GET", entity, UserDto.class,header);
 		String username=json2.getName()+"(@"+json2.getUsername()+")";
 		logger.info(username);
+		//メモリ解放
+		client=null;
+		uri=null;
+		header=null;
+		entity=null;
+		json2=null;
 		MemoryUtil.viewMemoryInfo();
 		return null;
 	}
