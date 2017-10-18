@@ -187,6 +187,9 @@ public class IndexAction {
 		entity.setCode(code);
 		AnnictAuthorizeDto json=client.sendRequest(uri, "POST", entity, AnnictAuthorizeDto.class,header);
 		pool = Executors.newFixedThreadPool(1);
+		if(json==null){
+			return "https://ckoshien.github.io/AnnictAccess_v2/#/code=401&redirect=true";
+		}
 		loginDto.setAccess_token(json.getAccess_token());
 		List<Future<String>> list = new ArrayList<Future<String>>();
 		Future<String> future=pool.submit(new AnnictCallTask(loginDto));
