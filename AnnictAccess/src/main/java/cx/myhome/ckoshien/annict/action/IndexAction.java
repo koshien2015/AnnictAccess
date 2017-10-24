@@ -25,7 +25,7 @@ import cx.myhome.ckoshien.annict.rest.dto.AnnictAuthorizeDto;
 import cx.myhome.ckoshien.annict.rest.dto.ProgramsDto;
 import cx.myhome.ckoshien.annict.rest.dto.ResultDto;
 import cx.myhome.ckoshien.annict.rest.dto.UserDto;
-import cx.myhome.ckoshien.annict.task.AnnictCallTask;
+import cx.myhome.ckoshien.annict.task.AnnictCallThread;
 import cx.myhome.ckoshien.annict.util.MemoryUtil;
 
 
@@ -192,7 +192,7 @@ public class IndexAction {
 		}
 		loginDto.setAccess_token(json.getAccess_token());
 		List<Future<String>> list = new ArrayList<Future<String>>();
-		Future<String> future=pool.submit(new AnnictCallTask(loginDto));
+		Future<String> future=pool.submit(new AnnictCallThread(loginDto));
 		list.add(future);
 		return "https://ckoshien.github.io/AnnictAccess_v2/#/code="+json.getAccess_token()+"&redirect=true";
 	}

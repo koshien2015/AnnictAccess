@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE components PUBLIC "-//SEASAR//DTD S2Container 2.4//EN"
+	"http://www.seasar.org/dtd/components24.dtd">
+<components>
+	<component name="schedulerConfiguration" class="org.seasar.chronos.core.SchedulerConfiguration">
+		<property name="hotdeployDisable">true</property>
+		<property name="daemon">true</property>
+		<property name="autoFinish">true</property>
+		<property name="autoFinishTimeLimit">10000L</property>
+		<property name="taskScanIntervalTime">5000L</property>
+		<property name="threadPoolType">@org.seasar.chronos.core.ThreadPoolType@CACHED</property>
+	</component>
+</components>

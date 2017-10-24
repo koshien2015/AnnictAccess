@@ -11,10 +11,10 @@ import cx.myhome.ckoshien.annict.rest.dto.AnnictAuthorizeDto;
 import cx.myhome.ckoshien.annict.rest.dto.UserDto;
 import cx.myhome.ckoshien.annict.util.MemoryUtil;
 
-public class AnnictCallTask implements Callable<String>{
+public class AnnictCallThread implements Callable<String>{
 	private static Logger logger = Logger.getLogger("rootLogger");
 	private LoginDto loginDto;
-	public AnnictCallTask(LoginDto loginDto){
+	public AnnictCallThread(LoginDto loginDto){
 		this.loginDto=loginDto;
 	}
 

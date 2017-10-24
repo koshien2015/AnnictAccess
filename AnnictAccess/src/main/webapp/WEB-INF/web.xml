@@ -53,12 +53,12 @@ version="2.4">
             <param-value>false</param-value>
         </init-param>
     </filter>
-    
+
     <filter>
         <filter-name>requestDumpFilter</filter-name>
         <filter-class>org.seasar.extension.filter.RequestDumpFilter</filter-class>
     </filter>
-        
+
     <filter-mapping>
         <filter-name>encodingfilter</filter-name>
         <url-pattern>/*</url-pattern>
@@ -81,13 +81,13 @@ version="2.4">
         <dispatcher>INCLUDE</dispatcher>
         <dispatcher>ERROR</dispatcher>
     </filter-mapping>
-    
+
     <filter-mapping>
         <filter-name>routingfilter</filter-name>
         <url-pattern>/*</url-pattern>
         <dispatcher>REQUEST</dispatcher>
     </filter-mapping>
-    
+
     <filter-mapping>
         <filter-name>requestDumpFilter</filter-name>
         <url-pattern>*.do</url-pattern>
@@ -96,7 +96,7 @@ version="2.4">
         <dispatcher>INCLUDE</dispatcher>
         <dispatcher>ERROR</dispatcher>
     </filter-mapping>
-    
+
     <servlet>
         <servlet-name>action</servlet-name>
         <servlet-class>org.apache.struts.action.ActionServlet</servlet-class>
@@ -118,13 +118,18 @@ version="2.4">
         </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>
-    
+
     <servlet>
         <servlet-name>s2container</servlet-name>
         <servlet-class>org.seasar.framework.container.servlet.S2ContainerServlet</servlet-class>
         <load-on-startup>2</load-on-startup>
     </servlet>
-  
+	<servlet>
+		<servlet-name>chronosServlet</servlet-name>
+		<servlet-class>org.seasar.chronos.extension.servlet.S2ChronosServlet</servlet-class>
+		<load-on-startup>3</load-on-startup>
+	</servlet>
+
     <servlet-mapping>
         <servlet-name>action</servlet-name>
         <url-pattern>*.do</url-pattern>
@@ -134,7 +139,7 @@ version="2.4">
         <servlet-name>s2container</servlet-name>
         <url-pattern>/s2container/*</url-pattern>
     </servlet-mapping>
-    
+
 	<!--
     <session-config>
         <session-timeout>1</session-timeout>
@@ -145,7 +150,7 @@ version="2.4">
     <welcome-file-list>
     </welcome-file-list>
 	-->
-    
+
     <jsp-config>
     	<jsp-property-group>
     		<url-pattern>*.jsp</url-pattern>
