@@ -81,7 +81,7 @@ public class IndexAction {
 		return "/index2&redirect=true";
 	}
 
-    @Execute(validator = false)
+    //@Execute(validator = false)
     public String index2(){
     	try {
     		InetAddress ia=InetAddress.getByName(request.getRemoteAddr());
@@ -155,10 +155,13 @@ public class IndexAction {
     	if(code==null){
     		//codeがnullの場合は認証リダイレクト
     		if(host.indexOf("localhost")!=-1){
+    			//return "https://annict.jp/oauth/authorize?client_id=7867a6f7dff79dcc31ac4700e9ff1a95b2fce1092994cb68d7f38dcf92594066&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2FAnnictAccess%2Fv2&response_type=code&scope=read+write&redirect=true";
     			return "https://annict.jp/oauth/authorize?client_id=7867a6f7dff79dcc31ac4700e9ff1a95b2fce1092994cb68d7f38dcf92594066&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2FAnnictAccess%2Fv2&response_type=code&scope=read+write&redirect=true";
     		}else if(host.indexOf("192.168.11")!=-1){
+    			//return "https://annict.jp/oauth/authorize?client_id=7867a6f7dff79dcc31ac4700e9ff1a95b2fce1092994cb68d7f38dcf92594066&redirect_uri=http%3A%2F%2F192.168.11.2%2FAnnictAccess%2Fv2&response_type=code&scope=read+write&redirect=true";
     			return "https://annict.jp/oauth/authorize?client_id=7867a6f7dff79dcc31ac4700e9ff1a95b2fce1092994cb68d7f38dcf92594066&redirect_uri=http%3A%2F%2F192.168.11.2%2FAnnictAccess%2Fv2&response_type=code&scope=read+write&redirect=true";
     		}else{
+    			//return "https://annict.jp/oauth/authorize?client_id=7867a6f7dff79dcc31ac4700e9ff1a95b2fce1092994cb68d7f38dcf92594066&redirect_uri=http%3A%2F%2Fjcbl.mydns.jp%2FAnnictAccess%2Fv2&response_type=code&scope=read+write&redirect=true";
     			return "https://annict.jp/oauth/authorize?client_id=7867a6f7dff79dcc31ac4700e9ff1a95b2fce1092994cb68d7f38dcf92594066&redirect_uri=http%3A%2F%2Fjcbl.mydns.jp%2FAnnictAccess%2Fv2&response_type=code&scope=read+write&redirect=true";
     		}
     	}
