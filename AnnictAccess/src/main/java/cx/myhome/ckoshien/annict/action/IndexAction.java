@@ -197,7 +197,9 @@ public class IndexAction {
 		List<Future<String>> list = new ArrayList<Future<String>>();
 		Future<String> future=pool.submit(new AnnictCallThread(loginDto));
 		list.add(future);
-		return "https://ckoshien.github.io/AnnictAccess_v2/#/code="+json.getAccess_token()+"&redirect=true";
+		list=null;
+		json=null;
+		return "https://ckoshien.github.io/AnnictAccess_v2/#/code="+loginDto.getAccess_token()+"&redirect=true";
 	}
 
     @Execute(validator = false)
