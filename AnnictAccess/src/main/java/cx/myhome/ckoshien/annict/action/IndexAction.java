@@ -151,7 +151,7 @@ public class IndexAction {
 
     @Execute(validator = false)
 	public String v2() {
-    	String host=request.getHeader("host");
+    	String host=request.getHeader("X-Forwarded-Host");
     	if(code==null){
     		//codeがnullの場合は認証リダイレクト
     		if(host.indexOf("localhost")!=-1){
