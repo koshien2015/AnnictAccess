@@ -46,7 +46,7 @@ public class IndexAction {
 	public Integer todayIndex;
 	private ExecutorService pool;
 
-    @Execute(validator = false)
+    //@Execute(validator = false)
 	public String index() {
     	String host=request.getHeader("host");
     	if(code==null){
@@ -200,6 +200,59 @@ public class IndexAction {
 		list=null;
 		json=null;
 		return "https://ckoshien.github.io/AnnictAccess_v2/#/code="+loginDto.getAccess_token()+"&redirect=true";
+	}
+
+    @Execute(validator = false)
+	public String v3() {
+    	String host=request.getHeader("X-Forwarded-Host");
+    	if(code==null){
+    		//codeがnullの場合は認証リダイレクト
+    		if(host.indexOf("localhost")!=-1){
+    			//return "https://annict.jp/oauth/authorize?client_id=7867a6f7dff79dcc31ac4700e9ff1a95b2fce1092994cb68d7f38dcf92594066&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2FAnnictAccess%2Fv2&response_type=code&scope=read+write&redirect=true";
+    			return "https://annict.jp/oauth/authorize?client_id=7867a6f7dff79dcc31ac4700e9ff1a95b2fce1092994cb68d7f38dcf92594066&redirect_uri=http%3A%2F%2Flocalhost%2FAnnictAccess%2Fv3&response_type=code&scope=read+write&redirect=true";
+    		}else if(host.indexOf("192.168.11")!=-1){
+    			//return "https://annict.jp/oauth/authorize?client_id=7867a6f7dff79dcc31ac4700e9ff1a95b2fce1092994cb68d7f38dcf92594066&redirect_uri=http%3A%2F%2F192.168.11.2%2FAnnictAccess%2Fv2&response_type=code&scope=read+write&redirect=true";
+    			return "https://annict.jp/oauth/authorize?client_id=7867a6f7dff79dcc31ac4700e9ff1a95b2fce1092994cb68d7f38dcf92594066&redirect_uri=http%3A%2F%2F192.168.11.2%2FAnnictAccess%2Fv3&response_type=code&scope=read+write&redirect=true";
+    		}else{
+    			//return "https://annict.jp/oauth/authorize?client_id=7867a6f7dff79dcc31ac4700e9ff1a95b2fce1092994cb68d7f38dcf92594066&redirect_uri=http%3A%2F%2Fjcbl.mydns.jp%2FAnnictAccess%2Fv2&response_type=code&scope=read+write&redirect=true";
+    			return "https://annict.jp/oauth/authorize?client_id=7867a6f7dff79dcc31ac4700e9ff1a95b2fce1092994cb68d7f38dcf92594066&redirect_uri=http%3A%2F%2Fjcbl.mydns.jp%2FAnnictAccess%2Fv3&response_type=code&scope=read+write&redirect=true";
+    		}
+    	}
+    	try {
+    		InetAddress ia=InetAddress.getByName(request.getRemoteAddr());
+    		logger.info(ia.getHostName()+":"+request.getRemotePort());
+		} catch (Exception e1) {
+			e1.printStackTrace();
+		}
+    	RestClient client = new RestClient();
+		String uri = "https://api.annict.com/oauth/token";
+		AnnictAuthorizeDto entity= new AnnictAuthorizeDto();
+		HashMap<String, String> header= new HashMap<String, String>();
+		entity.setClient_id(ResourceUtil.getProperties("config.properties").getProperty("client_id"));
+		if(host.indexOf("localhost")!=-1){
+			entity.setRedirect_uri("http://localhost/AnnictAccess/v3");
+		}else if(host.indexOf("192.168.11")!=-1){
+			entity.setRedirect_uri("http://192.168.11.2/AnnictAccess/v3");
+		}else{
+			entity.setRedirect_uri("http://jcbl.mydns.jp/AnnictAccess/v3");
+		}
+		entity.setResponse_type("code");
+		entity.setScope("read");
+		entity.setClient_secret(ResourceUtil.getProperties("config.properties").getProperty("secret_key"));
+		entity.setGrant_type("authorization_code");
+		entity.setCode(code);
+		AnnictAuthorizeDto json=client.sendRequest(uri, "POST", entity, AnnictAuthorizeDto.class,header);
+		pool = Executors.newFixedThreadPool(1);
+		if(json==null){
+			return "https://ckoshien.github.io/AnnictAccess_v2/#/code=401&redirect=true";
+		}
+		loginDto.setAccess_token(json.getAccess_token());
+		List<Future<String>> list = new ArrayList<Future<String>>();
+		Future<String> future=pool.submit(new AnnictCallThread(loginDto));
+		list.add(future);
+		list=null;
+		json=null;
+		return "https://annictaccessv3.netlify.com/code?code="+loginDto.getAccess_token()+"&redirect=true";
 	}
 
     @Execute(validator = false)
